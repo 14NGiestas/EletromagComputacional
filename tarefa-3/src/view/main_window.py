@@ -9,12 +9,11 @@ from matplotlib.figure import Figure
 
 from side_panel import SidePanel
 
-
 class View:
     def __init__(self, root, model, figsize=(7.5, 4), dpi=80):
         self.main_frame = Tk.Frame(root)
         self.model = model
-        # Setup of plotting figure
+        # Plot Figure Widget
         self.figure = Figure(figsize, dpi)
         self.axes = self.figure.add_axes((0.05, .05, .90, .90), facecolor=(.75, .75, .75), frameon=False)
         self.main_frame.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
@@ -34,7 +33,7 @@ class View:
 
     def plot(self, event):
         self.model.calculate()
-        results = self.model.results()
+        results = self.model.results
 
         self.axis.clear()
         self.axis.contourf(results["x"], results["y"], results["z"])
