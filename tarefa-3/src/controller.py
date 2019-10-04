@@ -7,11 +7,11 @@ from model import LienardWiecherModel
 from view import LienardWiecherView
 
 
-class LienardWiecherApp:
+class LienardWiechertApp:
     def __init__(self, charge, movement):
         self.root  = Tk.Tk() 
-        self.model = LienardWiecherModel(charge, movement)
-        self.view  = LienardWiecherView(self.root, self.model)
+        self.model = LienardWiechertModel(charge, movement)
+        self.view  = LienardWiechertView(self.root, self.model)
 
     def run(self):
         self.root.title("Tarefa 3 - Cargas em movimento")

@@ -14,3 +14,4 @@ class SidePanel:
         # Button 
         self.clear_button = Tk.Button(self.frame2, text="Clear")
         self.clear_button.pack(side="top", fill=Tk.BOTH)
+
