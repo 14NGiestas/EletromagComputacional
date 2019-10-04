@@ -3,9 +3,9 @@ try:
 except ModuleNotFoundError:
     import tkinter as Tk # python 3
 
-import matplotlib.animation as animation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+import matplotlib.animation as animation
 
 from .side_panel import SidePanel
 
