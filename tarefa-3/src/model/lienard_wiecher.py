@@ -1,6 +1,5 @@
 from moving_charge import MovingCharge
 from scipy.misc import derivative
-from scipy import optimize
 from numpy import linspace, meshgrid
 
 class LienardWiecherModel:
@@ -13,8 +12,6 @@ class LienardWiecherModel:
         (x,y) = meshgrid(x_axis, y_axis)
         z = self.charges.fields(x, y)
         return (x,y,z)
-
-    def 
 
     @property
     def results(self):

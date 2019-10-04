@@ -12,6 +12,6 @@ class SidePanel:
         self.plot_button = Tk.Button(self.panel, text="")
         self.plot_button.pack(side="top", fill=Tk.BOTH)
         # Button 
-        self.clear_button = Tk.Button(self.frame2, text="Clear")
+        self.clear_button = Tk.Button(self.panel, text="Clear")
         self.clear_button.pack(side="top", fill=Tk.BOTH)
 

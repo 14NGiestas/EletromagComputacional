@@ -1,6 +1,6 @@
-from controller import LienardWiecherApp
+from controller import LienardWiechertApp
 from model.movements import harmonic_oscilator
 
 if __name__ == "__main__":
-    app = LienardWiecherApp(charge=1e-5, movement=harmonic_oscilator)
+    app = LienardWiechertApp(movement=harmonic_oscilator)
     app.run()
