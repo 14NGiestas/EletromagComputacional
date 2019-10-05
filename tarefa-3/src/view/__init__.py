@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
 
-from .side_panel import SidePanel
+from view.side_panel import SidePanel
 
 class LienardWiechertView:
     def __init__(self, root, model, figsize=(7.5, 4), dpi=80):

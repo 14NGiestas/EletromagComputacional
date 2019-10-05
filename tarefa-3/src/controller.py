@@ -4,13 +4,13 @@ except ModuleNotFoundError:
     import tkinter as Tk # python 3
 
 from model import LienardWiechertModel
-from view import LienardWiechertView
+from view  import LienardWiechertView
 
 
 class LienardWiechertApp:
-    def __init__(self, movement):
+    def __init__(self):
         self.root  = Tk.Tk() 
-        self.model = LienardWiechertModel(movement)
+        self.model = LienardWiechertModel()
         self.view  = LienardWiechertView(self.root, self.model)
 
     def run(self):

@@ -9,7 +9,7 @@ class SidePanel:
         self.panel = Tk.Frame(root)
         self.panel.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
         # Button to start plotting the animation
-        self.plot_button = Tk.Button(self.panel, text="")
+        self.plot_button = Tk.Button(self.panel, text="Plot")
         self.plot_button.pack(side="top", fill=Tk.BOTH)
         # Button 
         self.clear_button = Tk.Button(self.panel, text="Clear")
