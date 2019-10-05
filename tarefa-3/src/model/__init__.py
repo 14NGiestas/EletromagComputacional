@@ -1,13 +1,13 @@
 from scipy import optimize
 from numpy.linalg import norm
-from numpy import linspace, meshgrid
+from numpy import linspace, meshgrid, arctan2
 from numpy import array, vectorize, dot, cross
 
 from model.constants import light_speed as c
 from model.moving_particle import MovingParticle
 
 class LienardWiechertModel:
-    def __init__(self, dt=1e-5, size=(2.0,2.0), ticks=(70,70)):
+    def __init__(self, dt=1e-5, size=(50.0,50.0), ticks=(100,100)):
         self.x_axis = linspace(-size[0], size[0], ticks[0])
         self.y_axis = linspace(-size[1], size[1], ticks[1])
         self.mesh = meshgrid(self.x_axis, self.y_axis, indexing='xy')
@@ -41,5 +41,6 @@ class LienardWiechertModel:
 
         E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
                                         + cross(r_ret,cross(u_ret,a_ret)))
-        return array(E[0],E[2])/norm(E)
+        return E[0:1]/norm(E)
+        #return norm(E)
 

@@ -3,6 +3,8 @@ try:
 except ModuleNotFoundError:
     import tkinter as Tk # python 3
 
+from numpy import hypot
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
@@ -35,6 +37,7 @@ class LienardWiechertView:
         x,y,z = self.model.calculate()
         self.axes.clear()
         self.axes.contourf(x,y,z)
-        #self.axes.quiver(x, y, z[0], z[1], pivot='middle', headwidth=4, headlength=6)
+        #self.axes.quiver(x, y, z[0], z[1], hypot(z[0],z[1]), pivot='middle', headwidth=4, headlength=6)
+        #self.axes.streamplot(x, y, z[0], z[1]) 
         self.figure.canvas.draw()
 
