@@ -32,10 +32,9 @@ class LienardWiechertView:
         self.figure.canvas.draw()
 
     def plot(self, event):
-        self.model.calculate()
-        results = self.model.results
-
-        self.axis.clear()
-        self.axis.contourf(results["x"], results["y"], results["z"])
+        x,y,z = self.model.calculate()
+        self.axes.clear()
+        self.axes.contourf(x,y,z)
+        #self.axes.quiver(x, y, z[0], z[1], pivot='middle', headwidth=4, headlength=6)
         self.figure.canvas.draw()
 
