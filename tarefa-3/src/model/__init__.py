@@ -14,12 +14,14 @@ class LienardWiechertModel:
         self.charge = MovingParticle()
         self.time = 0
         self.step = dt
+        self.frames = {'magnetic_field':[], 'electric_field':[]}
 
     def calculate(self):
         X, Y = self.mesh
         E = vectorize(self.electrical_field, excluded=['self'])
         B = vectorize(self.magnetic_field,   excluded=['self'])
-        return self.x_axis, self.y_axis, E(X,Y), B(X,Y)
+        self.frames['magnetic_field'].append(B)
+        self.frames['electrical_field'].append(E)
 
     def step(self):
         self.time += self.step
@@ -47,7 +49,7 @@ class LienardWiechertModel:
 
         E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
                                         + cross(r_ret,cross(u_ret,a_ret)))
-        return E[0:1]/norm(E)
+        return norm(E)
 
     def magnetic_field(self, x, y):
         R = array([x,y,0])
@@ -65,5 +67,5 @@ class LienardWiechertModel:
         E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
                                         + cross(r_ret,cross(u_ret,a_ret)))
         B = cross(r_ret/norm(r_ret), E)
-        return B[2]/norm(B)
+        return norm(B)
 
