@@ -34,10 +34,9 @@ class LienardWiechertView:
         self.figure.canvas.draw()
 
     def plot(self, event):
-        x,y,z = self.model.calculate()
+        x, y, E, B = self.model.calculate()
         self.axes.clear()
-        self.axes.contourf(x,y,z)
-        #self.axes.quiver(x, y, z[0], z[1], hypot(z[0],z[1]), pivot='middle', headwidth=4, headlength=6)
-        #self.axes.streamplot(x, y, z[0], z[1]) 
+        self.axes.contourf(x,y,E)
+        #self.axes.contourf(x,y,B)
         self.figure.canvas.draw()
 
