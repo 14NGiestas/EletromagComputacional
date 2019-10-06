@@ -1,71 +1,58 @@
-from scipy import optimize
-from numpy.linalg import norm
-from numpy import linspace, meshgrid, arctan2
-from numpy import array, vectorize, dot, cross
+try:
+    import Tkinter as Tk # python 2
+except ModuleNotFoundError:
+    import tkinter as Tk # python 3
 
-from model.constants import light_speed as c
-from model.moving_particle import MovingParticle
+from numpy import hypot
+from tkinter import messagebox
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from matplotlib.animation import FuncAnimation
 
-class LienardWiechertModel:
-    def __init__(self, dt=1e-9, size=(50.0,50.0), ticks=(100,100)):
-        self.x_axis = linspace(-size[0], size[0], ticks[0])
-        self.y_axis = linspace(-size[1], size[1], ticks[1])
-        self.mesh = meshgrid(self.x_axis, self.y_axis, indexing='xy')
-        self.charge = MovingParticle()
-        self.time = 0
-        self.time_step = dt
-        self.frames = {'magnetic_field':[], 'electric_field':[]}
+from view.side_panel import SidePanel
 
-    def calculate(self):
-        X, Y = self.mesh
-        E = vectorize(self.electrical_field, excluded=['self'])
-        B = vectorize(self.magnetic_field,   excluded=['self'])
-        self.frames['magnetic_field'].append(B(X,Y))
-        self.frames['electric_field'].append(E(X,Y))
+class LienardWiechertView:
+    def __init__(self, root, model, figsize=(7.5, 4), dpi=80):
+        self.main_frame = Tk.Frame(root)
+        self.model = model
+        # Plot Figure Widget
+        self.figure = Figure(figsize, dpi)
+        self.axes = self.figure.add_axes((0.05, .05, .90, .90), facecolor=(.75, .75, .75), frameon=False)
+        self.main_frame.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
+        # UI Controls
+        self.sidepanel = SidePanel(root)
+        # UI Callbacks
+        self.sidepanel.plot_button.bind("<Button>", self.plot)
+        self.sidepanel.clear_button.bind("<Button>", self.clear)
+        self.sidepanel.simulate_button.bind("<Button>",self.simulate)
+        # Canvas setup
+        self.canvas = FigureCanvasTkAgg(self.figure, master=self.main_frame)
+        self.canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
+        self.canvas.draw()
 
-    def step(self):
-        self.time += self.time_step
+    def clear(self, event):
+        self.axes.clear()
+        self.figure.canvas.draw()
 
-    def reset(self):
-        self.time = 0
+    def plot(self, event):
 
-    def retarded_time(self, R, r):
-        f = lambda t_ret: self.time - t_ret - norm(R - r(t_ret))/c
-        t_ret = optimize.newton(f, self.time) 
-        return t_ret
+        def animate(i):
+            self.axes.clear()
+            self.figure.clear()
 
-    def electrical_field(self, x, y):
-        R = array([x,y,0])
+            a = self.axes.imshow(self.model.frames['eletric_fields'][i-1], cmap='Reds', vmin=0, vmax=0.001)
+            self.figure.colorbar(a)
 
-        r = self.charge.position
-        v = self.charge.velocity
-        a = self.charge.aceleration
 
-        t_ret = self.retarded_time(R, r)
-        r_ret = R - r(t_ret)
-        u_ret = c * r_ret / norm(r_ret) - v(t_ret)
-        a_ret = a(t_ret)
-        v_ret = v(t_ret)
+        #self.axes.contourf(x,y,E)
+        #self.axes.contourf(x,y,B)
+        self.figure.canvas.draw()
 
-        E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
-                                        + cross(r_ret,cross(u_ret,a_ret)))
-        return norm(E)
-
-    def magnetic_field(self, x, y):
-        R = array([x,y,0])
-
-        r = self.charge.position
-        v = self.charge.velocity
-        a = self.charge.aceleration
-
-        t_ret = self.retarded_time(R, r)
-        r_ret = R - r(t_ret)
-        u_ret = c * r_ret / norm(r_ret) - v(t_ret)
-        a_ret = a(t_ret)
-        v_ret = v(t_ret)
-
-        E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
-                                        + cross(r_ret,cross(u_ret,a_ret)))
-        B = cross(r_ret/norm(r_ret), E)
-        return norm(B)
-
+    def simulate(self,event):
+        # 1 --> self.settings.simulation_time
+        
+        T = 1e-8
+        while self.model.time <= T:
+            self.model.calculate()
+            self.model.step()
+        messagebox.showinfo("Simulation", "Done!!")
