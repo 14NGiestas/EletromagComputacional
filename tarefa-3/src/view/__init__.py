@@ -4,7 +4,7 @@ except ModuleNotFoundError:
     import tkinter as Tk # python 3
 
 from numpy import hypot
-
+from tkinter import messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
@@ -24,6 +24,7 @@ class LienardWiechertView:
         # UI Callbacks
         self.sidepanel.plot_button.bind("<Button>", self.plot)
         self.sidepanel.clear_button.bind("<Button>", self.clear)
+        self.sidepanel.simulate_button.bind("<Button>",self.simulate)
         # Canvas setup
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.main_frame)
         self.canvas.get_tk_widget().pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
@@ -34,9 +35,16 @@ class LienardWiechertView:
         self.figure.canvas.draw()
 
     def plot(self, event):
-        self.model.calculate()
+        x, y, E = self.model.calculate()
         self.axes.clear()
-        self.axes.contourf(x,y,E)
+        self.axes.imshow(E,cmap='Reds', vmin=0,vmax=0.001)
+        #self.axes.contourf(x,y,E)
         #self.axes.contourf(x,y,B)
         self.figure.canvas.draw()
 
+    def simulate(self,event):
+        # 1 --> self.settings.simulation_time
+        while self.model.time <= 1e-8:
+            self.model.calculate()
+            self.model.step()
+        messagebox.showinfo("Simulation", "Done!!")
