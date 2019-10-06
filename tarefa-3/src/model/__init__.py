@@ -13,18 +13,18 @@ class LienardWiechertModel:
         self.mesh = meshgrid(self.x_axis, self.y_axis, indexing='xy')
         self.charge = MovingParticle()
         self.time = 0
-        self.step = dt
+        self.time_step = dt
         self.frames = {'magnetic_field':[], 'electric_field':[]}
 
     def calculate(self):
         X, Y = self.mesh
         E = vectorize(self.electrical_field, excluded=['self'])
         B = vectorize(self.magnetic_field,   excluded=['self'])
-        self.frames['magnetic_field'].append(B)
-        self.frames['electrical_field'].append(E)
+        self.frames['magnetic_field'].append(B(X,Y))
+        self.frames['electric_field'].append(E(X,Y))
 
     def step(self):
-        self.time += self.step
+        self.time += self.time_step
 
     def reset(self):
         self.time = 0
