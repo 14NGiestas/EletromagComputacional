@@ -34,7 +34,7 @@ class LienardWiechertView:
         self.figure.canvas.draw()
 
     def plot(self, event):
-        x, y, E, B = self.model.calculate()
+        self.model.calculate()
         self.axes.clear()
         self.axes.contourf(x,y,E)
         #self.axes.contourf(x,y,B)

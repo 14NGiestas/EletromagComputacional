@@ -12,7 +12,7 @@ class LienardWiechertApp:
         self.root  = Tk.Tk() 
         self.model = LienardWiechertModel()
         self.view  = LienardWiechertView(self.root, self.model)
-
+    
     def run(self):
         self.root.title("Tarefa 3 - Cargas em movimento")
         self.root.deiconify()
