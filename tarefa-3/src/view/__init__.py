@@ -40,10 +40,10 @@ class LienardWiechertView:
             self.axes.clear()
             self.figure.clear()
 
-            a = self.axes.imshow(self.model.frames['eletric_fields'][i-1], cmap='Reds', vmin=0, vmax=0.001)
+            a = self.axes.imshow(self.model.frames['electric_field'][i-1], cmap='Reds', vmin=0, vmax=0.001)
             self.figure.colorbar(a)
 
-
+        ani = FuncAnimation(self.figure, animate, interval=100)
         #self.axes.contourf(x,y,E)
         #self.axes.contourf(x,y,B)
         self.figure.canvas.draw()
