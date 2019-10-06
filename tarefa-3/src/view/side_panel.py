@@ -17,4 +17,7 @@ class SidePanel:
         # Simulate Buttor
         self.simulate_button = Tk.Button(self.panel, text='Simulate')
         self.simulate_button.pack(side='top',fill=Tk.BOTH)
+        # Save Button
+        self.save_button = Tk.Button(self.panel,text="Save")
+        self.save_button.pack(side='top',fill=Tk.BOTH)
 
