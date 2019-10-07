@@ -10,7 +10,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from matplotlib.animation import FuncAnimation, FFMpegWriter
+from matplotlib.animation import FuncAnimation
 from matplotlib import pyplot as plt
 
 from view.control_panel import ControlPanel 
@@ -79,6 +79,5 @@ class LienardWiechertView:
              messagebox.showerror("Error", "Simulation not calculated")
              return
 
-        filename = filedialog.asksaveasfilename(initialdir="/", title="Save file", filetypes=(("Animation Files","*.mp4"),("All files","*.*")))
-
-        self.animation.save(filename, writer=FFMpegWriter(fps=10))
+        filename = filedialog.asksaveasfilename(initialdir="/", title="Save file", filetypes=(("Animation Files","*.gif"),("All files","*.*")))
+        self.animation.save(filename, writer='imagemagick')
