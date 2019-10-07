@@ -1,10 +1,10 @@
-from numpy import sin, cos, exp
+from numpy import sin, cos, exp, pi
 
 class SimpleHarmonicOscilator:
-    def __init__(self, **kwargs):
-        self.frequency = kwargs.get('frequency', 1)
-        self.amplitude = kwargs.get('amplitude', 1)
-        self.phase     = kwargs.get('phase',     0)
+    def __init__(self, settings):
+        self.frequency = settings['movement'].getfloat('frequency')
+        self.amplitude = settings['movement'].getfloat('amplitude')
+        self.phase     = settings['movement'].getfloat('phase')
 
     def position(self, t):
         omega, A, phi = self.frequency, self.amplitude, self.phase
@@ -17,10 +17,30 @@ class SimpleHarmonicOscilator:
     def aceleration(self, t): 
         omega, A, phi = self.frequency, self.amplitude, self.phase
         return -A*omega**2*cos(omega*t + phi)
-    
-    @property
-    def parameters(self):
-        return {'frequency': self.frequency,
-                'amplitude': self.amplitude,
-                'phase': self.phase}
-        
+
+class Pulse:
+    def __init__(self, settings):
+        self.frequency = settings['movement'].getfloat('frequency')
+        self.amplitude = settings['movement'].getfloat('amplitude')
+        self.phase     = settings['movement'].getfloat('phase')
+
+    def position(self, t):
+        if t > 1e-9:
+            return 0
+        else: 
+            omega, A, phi = self.frequency, self.amplitude, self.phase
+            return A*cos(omega*t + phi)
+
+    def velocity(self, t):
+        if t > 1e-9:
+            return 0
+        else:
+            omega, A, phi = self.frequency, self.amplitude, self.phase
+            return -A*omega*sin(omega*t + phi)
+
+    def aceleration(self, t): 
+        if t > 1e-9:
+            return 0
+        else:
+            omega, A, phi = self.frequency, self.amplitude, self.phase
+            return -A*omega**2*cos(omega*t + phi)

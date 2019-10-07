@@ -15,12 +15,15 @@ class LienardWiechertModel:
         ticks_y = self.settings['simulation'].getfloat('mesh_ticks_y')
         self.field = self.settings['simulation']['field']
 
-        self.charge = MovingParticle()
+        self.charge = MovingParticle(self.settings)
         self.time = 0
         self.time_step = self.settings['simulation'].getfloat('time_step')
         self.frames = [] 
         self.x_axis = linspace(-size_x, size_x, ticks_x)
         self.y_axis = linspace(-size_y, size_y, ticks_y)
+        self.translation_x = self.settings['simulation'].getfloat('translation_x')
+        self.translation_y = self.settings['simulation'].getfloat('translation_y')
+        self.translation_z = self.settings['simulation'].getfloat('translation_z')
 
     def calculate(self):
         X, Y = meshgrid(self.x_axis, self.y_axis, indexing='xy')
@@ -44,7 +47,8 @@ class LienardWiechertModel:
         return t_ret
 
     def electric_field(self, x, y):
-        R = array([x,y,0])
+        dx, dy, dz = self.translation_x, self.translation_y, self.translation_z
+        R = array([x+dx,y+dy,dz])
 
         r = self.charge.position
         v = self.charge.velocity
@@ -61,7 +65,8 @@ class LienardWiechertModel:
         return norm(E)
 
     def magnetic_field(self, x, y):
-        R = array([x,y,0])
+        dx, dy, dz = self.translation_x, self.translation_y, self.translation_z
+        R = array([x+dx,y+dy,dz])
 
         r = self.charge.position
         v = self.charge.velocity

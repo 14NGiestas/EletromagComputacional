@@ -14,7 +14,6 @@ from matplotlib.animation import FuncAnimation
 from matplotlib import pyplot as plt
 
 from view.control_panel import ControlPanel 
-from view.settings_window import SettingsWindow
 
 plt.style.use('seaborn')
 
@@ -27,7 +26,7 @@ class LienardWiechertView:
         # Plot Figure Widget
         self.figure = Figure()
         self.axes = self.figure.add_axes((0.05, .05, .90, .90), frameon=False)
-        self.main_frame.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
+        self.main_frame.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
         self.animation = None
         # UI Controls
         self.control_panel = ControlPanel(self.root, self.settings)
@@ -62,8 +61,9 @@ class LienardWiechertView:
         messagebox.showinfo("Success", "Simulation finished!")
 
         dataset = self.model.frames
-
-        fig = self.axes.imshow(dataset[0], vmin=0, vmax=0.1, cmap='Blues')
+        colorbar_max = self.settings['simulation'].getfloat('colorbar_max')
+        colorbar_min = self.settings['simulation'].getfloat('colorbar_min')
+        fig = self.axes.imshow(dataset[0], vmin=colorbar_min, vmax=colorbar_max, cmap='Blues')
         self.figure.colorbar(fig)
 
         def animation(i):
