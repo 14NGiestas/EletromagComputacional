@@ -5,7 +5,7 @@ from model.movements import SimpleHarmonicOscilator
 
 class MovingParticle:
     def __init__(self):
-        self.movement_x = SimpleHarmonicOscilator(angular_velocity=2e8)
+        self.movement_x = SimpleHarmonicOscilator(frequency=2e8)
         self.movement_y = None
         self.movement_z = None
 

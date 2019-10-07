@@ -7,34 +7,43 @@ from model.constants import light_speed as c
 from model.moving_particle import MovingParticle
 
 class LienardWiechertModel:
-    def __init__(self, dt=1e-9, size=(50.0,50.0), ticks=(100,100)):
-        self.x_axis = linspace(-size[0], size[0], ticks[0])
-        self.y_axis = linspace(-size[1], size[1], ticks[1])
-        self.mesh = meshgrid(self.x_axis, self.y_axis, indexing='xy')
+    def __init__(self, settings):
+        self.settings = settings
+        size_x = self.settings['simulation'].getfloat('mesh_size_x')
+        size_y = self.settings['simulation'].getfloat('mesh_size_y')
+        ticks_x = self.settings['simulation'].getfloat('mesh_ticks_x')
+        ticks_y = self.settings['simulation'].getfloat('mesh_ticks_y')
+        self.field = self.settings['simulation']['field']
+
         self.charge = MovingParticle()
         self.time = 0
-        self.step = dt
-        self.frames = {'magnetic_field':[], 'electric_field':[]}
+        self.time_step = self.settings['simulation'].getfloat('time_step')
+        self.frames = [] 
+        self.x_axis = linspace(-size_x, size_x, ticks_x)
+        self.y_axis = linspace(-size_y, size_y, ticks_y)
 
     def calculate(self):
-        X, Y = self.mesh
-        E = vectorize(self.electrical_field, excluded=['self'])
-        B = vectorize(self.magnetic_field,   excluded=['self'])
-        self.frames['magnetic_field'].append(B)
-        self.frames['electrical_field'].append(E)
+        X, Y = meshgrid(self.x_axis, self.y_axis, indexing='xy')
+        if self.field == 'electric':
+            E = vectorize(self.electric_field, excluded=['self'])
+            self.frames.append(E(X,Y))
+        else:
+            B = vectorize(self.magnetic_field, excluded=['self'])
+            self.frames.append(B(X,Y))
 
     def step(self):
-        self.time += self.step
+        self.time += self.time_step
 
     def reset(self):
         self.time = 0
+        self.frames = [] 
 
     def retarded_time(self, R, r):
         f = lambda t_ret: self.time - t_ret - norm(R - r(t_ret))/c
         t_ret = optimize.newton(f, self.time) 
         return t_ret
 
-    def electrical_field(self, x, y):
+    def electric_field(self, x, y):
         R = array([x,y,0])
 
         r = self.charge.position

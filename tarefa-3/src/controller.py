@@ -5,16 +5,19 @@ except ModuleNotFoundError:
 
 from model import LienardWiechertModel
 from view  import LienardWiechertView
+from configparser import ConfigParser
 
 
-class LienardWiechertApp:
-    def __init__(self):
-        self.root  = Tk.Tk() 
-        self.model = LienardWiechertModel()
-        self.view  = LienardWiechertView(self.root, self.model)
-    
+class LienardWiechertApp(Tk.Tk):
+    def __init__(self, configfile='settings.ini'):
+        super().__init__()
+        self.settings = ConfigParser()
+        self.settings.filename = configfile
+        self.settings.read(self.settings.filename)
+        self.model = LienardWiechertModel(self.settings)
+        self.view  = LienardWiechertView(self, self.model, self.settings)
+
     def run(self):
-        self.root.title("Tarefa 3 - Cargas em movimento")
-        self.root.deiconify()
-        self.root.mainloop()
-
+        self.title("Tarefa 3 - Cargas em movimento")
+        self.deiconify()
+        self.mainloop()
