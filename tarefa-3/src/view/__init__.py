@@ -6,13 +6,17 @@ except ModuleNotFoundError:
     from tkinter import filedialog
 
 from numpy import hypot
-
+from tkinter import messagebox
+from tkinter import filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
+from matplotlib import pyplot as plt
 
 from view.control_panel import ControlPanel 
 from view.settings_window import SettingsWindow
+
+plt.style.use('seaborn')
 
 class LienardWiechertView:
     def __init__(self, root, model, settings):
@@ -82,4 +86,3 @@ class LienardWiechertView:
              return
         filename = filedialog.asksaveasfilename(initialdir="/", title="Save file", filetypes=(("Animation Files","*.gif"),("All files","*.*")))
         self.animation.save(filename)
-
