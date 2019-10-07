@@ -1,11 +1,8 @@
-try:
-    import Tkinter as Tk # python 2
-except ModuleNotFoundError:
-    import tkinter as Tk # python 3
+import tkinter as Tk
 
-import settings
 from model import LienardWiechertModel
 from view  import LienardWiechertView
+import settings
 
 
 class LienardWiechertApp(Tk.Tk):

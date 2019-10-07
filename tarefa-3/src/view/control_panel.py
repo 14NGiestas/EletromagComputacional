@@ -1,8 +1,4 @@
-try:
-    import Tkinter as Tk # python 2
-except ModuleNotFoundError:
-    import tkinter as Tk # python 3
-
+import tkinter as Tk
 
 class ControlPanel(Tk.Frame):
     def __init__(self, root, settings):
