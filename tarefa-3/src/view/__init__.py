@@ -10,7 +10,7 @@ from tkinter import messagebox
 from tkinter import filedialog
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 from matplotlib import pyplot as plt
 
 from view.control_panel import ControlPanel 
@@ -30,10 +30,9 @@ class LienardWiechertView:
         self.main_frame.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
         self.animation = None
         # UI Controls
-        self.control_panel = ControlPanel(self.root)
+        self.control_panel = ControlPanel(self.root, self.settings)
         # UI Callbacks
         self.control_panel.play_button.bind("<Button>", self.play)
-        self.control_panel.stop_button.bind("<Button>", self.stop)
         self.control_panel.calc_button.bind("<Button>", self.calculate)
         self.control_panel.save_button.bind("<Button>", self.save)
         # Canvas setup
@@ -52,11 +51,6 @@ class LienardWiechertView:
         else:
             play_pause.config(text='Play')
         self.animation.paused = not self.animation.paused
-
-    def stop(self, event):
-        if not self.animation:
-             messagebox.showerror("Error", "Simulation not calculated")
-        self.animation.event_source.stop()
 
     def calculate(self, event):
         self.settings.read(self.settings.filename)
@@ -77,12 +71,14 @@ class LienardWiechertView:
                 fig.set_array(dataset[i-1])
 
         self.animation = FuncAnimation(self.figure, animation, interval=100, frames=len(dataset))
-        self.animation.paused = False
+        self.animation.paused = True 
         self.canvas.draw()
 
-    def save(self):
+    def save(self, event):
         if not self.animation:
              messagebox.showerror("Error", "Simulation not calculated")
              return
-        filename = filedialog.asksaveasfilename(initialdir="/", title="Save file", filetypes=(("Animation Files","*.gif"),("All files","*.*")))
-        self.animation.save(filename)
+
+        filename = filedialog.asksaveasfilename(initialdir="/", title="Save file", filetypes=(("Animation Files","*.mp4"),("All files","*.*")))
+
+        self.animation.save(filename, writer=FFMpegWriter(fps=10))
