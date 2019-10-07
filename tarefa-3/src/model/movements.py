@@ -2,9 +2,9 @@ from numpy import sin, cos, exp, pi
 
 class SimpleHarmonicOscilator:
     def __init__(self, settings):
-        self.frequency = settings['movement'].getfloat('frequency')
-        self.amplitude = settings['movement'].getfloat('amplitude')
-        self.phase     = settings['movement'].getfloat('phase')
+        self.frequency = settings.frequency
+        self.amplitude = settings.amplitude
+        self.phase     = settings.phase
 
     def position(self, t):
         omega, A, phi = self.frequency, self.amplitude, self.phase
@@ -20,9 +20,9 @@ class SimpleHarmonicOscilator:
 
 class Pulse:
     def __init__(self, settings):
-        self.frequency = settings['movement'].getfloat('frequency')
-        self.amplitude = settings['movement'].getfloat('amplitude')
-        self.phase     = settings['movement'].getfloat('phase')
+        self.frequency = settings.frequency
+        self.amplitude = settings.amplitude
+        self.phase     = settings.phase
 
     def position(self, t):
         if t > 1e-9:

@@ -1,16 +1,10 @@
-try:
-    import Tkinter as Tk # python 2
-except ModuleNotFoundError:
-    import tkinter as Tk # python 3
-    from tkinter import messagebox
-    from tkinter import filedialog
-
-from numpy import hypot
+import tkinter as Tk
 from tkinter import messagebox
 from tkinter import filedialog
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
+from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 
 from view.control_panel import ControlPanel 
@@ -52,17 +46,16 @@ class LienardWiechertView:
         self.animation.paused = not self.animation.paused
 
     def calculate(self, event):
-        self.settings.read(self.settings.filename)
         self.model.reset()
-        time_total = self.settings['simulation'].getfloat('time_total')
+        time_total = self.settings.time_total
         while self.model.time <= time_total:
             self.model.calculate()
             self.model.step()
         messagebox.showinfo("Success", "Simulation finished!")
 
         dataset = self.model.frames
-        colorbar_max = self.settings['simulation'].getfloat('colorbar_max')
-        colorbar_min = self.settings['simulation'].getfloat('colorbar_min')
+        colorbar_max = self.settings.colorbar_max
+        colorbar_min = self.settings.colorbar_min
         fig = self.axes.imshow(dataset[0], vmin=colorbar_min, vmax=colorbar_max, cmap='Blues')
         self.figure.colorbar(fig)
 

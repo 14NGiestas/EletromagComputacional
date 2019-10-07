@@ -8,31 +8,25 @@ from model.moving_particle import MovingParticle
 
 class LienardWiechertModel:
     def __init__(self, settings):
-        self.settings = settings
-        size_x = self.settings['simulation'].getfloat('mesh_size_x')
-        size_y = self.settings['simulation'].getfloat('mesh_size_y')
-        ticks_x = self.settings['simulation'].getfloat('mesh_ticks_x')
-        ticks_y = self.settings['simulation'].getfloat('mesh_ticks_y')
-        self.field = self.settings['simulation']['field']
+        size_x = settings.mesh_size_x
+        size_y = settings.mesh_size_y
+        ticks_x = settings.mesh_ticks_x
+        ticks_y = settings.mesh_ticks_y
+        self.translation_x = settings.translation_x
+        self.translation_y = settings.translation_y
+        self.translation_z = settings.translation_z
 
-        self.charge = MovingParticle(self.settings)
-        self.time = 0
-        self.time_step = self.settings['simulation'].getfloat('time_step')
         self.frames = [] 
+        self.time = 0
+        self.time_step = settings.time_step
         self.x_axis = linspace(-size_x, size_x, ticks_x)
         self.y_axis = linspace(-size_y, size_y, ticks_y)
-        self.translation_x = self.settings['simulation'].getfloat('translation_x')
-        self.translation_y = self.settings['simulation'].getfloat('translation_y')
-        self.translation_z = self.settings['simulation'].getfloat('translation_z')
+        self.charge = MovingParticle(settings)
 
     def calculate(self):
         X, Y = meshgrid(self.x_axis, self.y_axis, indexing='xy')
-        if self.field == 'electric':
-            E = vectorize(self.electric_field, excluded=['self'])
-            self.frames.append(E(X,Y))
-        else:
-            B = vectorize(self.magnetic_field, excluded=['self'])
-            self.frames.append(B(X,Y))
+        E = vectorize(self.electric_field, excluded=['self'])
+        self.frames.append(E(X,Y))
 
     def step(self):
         self.time += self.time_step
@@ -63,23 +57,3 @@ class LienardWiechertModel:
         E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
                                         + cross(r_ret,cross(u_ret,a_ret)))
         return norm(E)
-
-    def magnetic_field(self, x, y):
-        dx, dy, dz = self.translation_x, self.translation_y, self.translation_z
-        R = array([x+dx,y+dy,dz])
-
-        r = self.charge.position
-        v = self.charge.velocity
-        a = self.charge.aceleration
-
-        t_ret = self.retarded_time(R, r)
-        r_ret = R - r(t_ret)
-        u_ret = c * r_ret / norm(r_ret) - v(t_ret)
-        a_ret = a(t_ret)
-        v_ret = v(t_ret)
-
-        E = norm(r_ret)/(dot(r_ret,u_ret))**3*(u_ret*(c**2-norm(v_ret)**2)
-                                        + cross(r_ret,cross(u_ret,a_ret)))
-        B = cross(r_ret/norm(r_ret), E)
-        return norm(B)
-
