@@ -1,5 +1,5 @@
-from controller import LienardWiechertApp
+from controller import SolenoidApp 
 
 if __name__ == "__main__":
-    app = LienardWiechertApp()
+    app = SolenoidApp()
     app.run()

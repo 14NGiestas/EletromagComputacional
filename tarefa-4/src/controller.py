@@ -1,18 +1,31 @@
 import tkinter as Tk
+from pubsub import pub
+from model import HelicoidalSolenoid 
+from view  import SolenoidView
 
-from model import LienardWiechertModel
-from view  import LienardWiechertView
-import settings
 
+class SolenoidApp:
+    def __init__(self):
+        self.model = HelicoidalSolenoid()
+        self.view  = SolenoidView("Tarefa 4 - Campo magnético em um solenóide")
+        # App Events 
+        pub.subscribe(self.save_simulation, 'on_save')
+        pub.subscribe(self.load_simulation, 'on_load')
+        pub.subscribe(self.calculate_field, 'on_input')
 
-class LienardWiechertApp(Tk.Tk):
-    def __init__(self, configfile='settings.ini'):
-        super().__init__()
-        self.settings = settings
-        self.model = LienardWiechertModel(self.settings)
-        self.view  = LienardWiechertView(self, self.model, self.settings)
+    def calculate_field(self, params):
+        ''' Feed the model with the input parameters and calculate ''' 
+        self.model.feed(params)
+        self.model.calculate()
+        pub.sendMessage('update_view', results=self.model.results)
+
+    def save_simulation(self):
+        ''' Opens the view save file dialog '''
+        self.view.save_dialog(results=self.model.results)
+
+    def load_simulation(self):
+        ''' Opens the view load file dialog '''
+        self.view.load_dialog(results=self.model.results)
 
     def run(self):
-        self.title("Tarefa 3 - Cargas em movimento")
-        self.deiconify()
-        self.mainloop()
+        self.view.open()
