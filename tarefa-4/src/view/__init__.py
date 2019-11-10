@@ -42,13 +42,13 @@ class SolenoidView(Tk.Tk):
         H,  V  = results['HV'][0], results['HV'][1]
         Bh, Bv = results["Bhv"]
 
-        self.axes.set_aspect('equal')
         self.axes.clear()
         self.canvas.draw()
         
         view_mode = self.control_panel.state['view_mode']
 
         if view_mode == 'yz':
+            self.axes.set_aspect('auto')
             c = 2 * log(hypot(Bh, Bv))
             self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=1.5)
         
@@ -59,6 +59,7 @@ class SolenoidView(Tk.Tk):
             ptsX = [(-1)**(i) for i in range(2*l)]
             self.axes.plot(ptsX, ptsY, 'o', markersize=7, markerfacecolor='w', markeredgewidth=1.5, markeredgecolor=(0, 0, 0, 1))
         elif view_mode == 'xy':
+            self.axes.set_aspect('equal')
             self.axes.streamplot(H, V, Bh, Bv, cmap='viridis', density=1.5)
             t_int = linspace(0, 1, 100)
             self.axes.plot(cos(2*pi*t_int), sin(2*pi*t_int), color='black')
