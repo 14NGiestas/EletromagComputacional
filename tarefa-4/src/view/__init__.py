@@ -1,6 +1,5 @@
 import tkinter as Tk
-from tkinter import messagebox
-from tkinter import filedialog
+from tkinter import messagebox, filedialog, Toplevel, Message
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -67,6 +66,15 @@ class SolenoidView(Tk.Tk):
                                                 filetypes=ALLOWED_FILES,
                                                 title="Load simulation file")
         pass
+
+    def open_running(self, task):
+        popup = Toplevel(self)
+        popup.title("Running")
+        msg = Message(popup, text="Running simulation. Please Wait.")
+        msg.pack()
+        while task.is_alive():
+            popup.update()
+        popup.destroy() # only when thread dies.
     
     def open(self):
         self.mainloop()

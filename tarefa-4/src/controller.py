@@ -3,6 +3,8 @@ from pubsub import pub
 from model import HelicoidalSolenoid 
 from view  import SolenoidView
 
+from threading import Thread
+
 
 class SolenoidApp:
     def __init__(self):
@@ -16,7 +18,9 @@ class SolenoidApp:
     def calculate_field(self, params):
         ''' Feed the model with the input parameters and calculate ''' 
         self.model.feed(params)
-        self.model.calculate()
+        task = Thread(target=self.model.calculate)
+        task.start()
+        self.view.open_running(task)
         pub.sendMessage('update_view', results=self.model.results)
 
     def save_simulation(self):
@@ -25,7 +29,7 @@ class SolenoidApp:
 
     def load_simulation(self):
         ''' Opens the view load file dialog '''
-        self.view.load_dialog(results=self.model.results)
+        self.view.load_dialog()
 
     def run(self):
         self.view.open()
