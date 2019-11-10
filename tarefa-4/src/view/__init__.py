@@ -69,6 +69,9 @@ class SolenoidView(Tk.Tk):
 
     def open_running(self, task):
         popup = Toplevel(self)
+        x = self.winfo_x()
+        y = self.winfo_y()
+        popup.geometry("+%d+%d" % (x + x//2, y + y//2))
         popup.title("Running")
         msg = Message(popup, text="Running simulation. Please Wait.")
         msg.pack()

@@ -9,20 +9,18 @@ class ControlPanel(Tk.Frame):
 
         # * $ Turns: l = \frac{L}{p} $
         # * * Label
-        self.turns_label = Label(self, text=u"Turns (l = 2πL/h)")
+        self.turns_label = Label(self, text=u"Turns (L)")
         self.turns_label.pack(fill=Tk.BOTH)
         # * * Slider
-        self.turns_slider = Scale(self, from_=0.01, to=100, resolution=0.01, orient=Tk.HORIZONTAL)
-        self.turns_slider.bind('<ButtonRelease-1>', self.on_input)
+        self.turns_slider = Scale(self, from_=1, to=10, resolution=1, orient=Tk.HORIZONTAL)
         self.turns_slider.pack(fill=Tk.BOTH)
 
         # * $ Strech: s  = \frac{R}{p} $ 
         # * * Label
-        self.stretch_label = Label(self, text=u"Stretch (s = 2πR/h)")
+        self.stretch_label = Label(self, text=u"Stretch (h/R)")
         self.stretch_label.pack(fill=Tk.BOTH)
         # * * Slider
-        self.stretch_slider = Scale(self, from_=0.01, to=10, resolution=0.01, orient=Tk.HORIZONTAL)
-        self.stretch_slider.bind('<ButtonRelease-1>', self.on_input)
+        self.stretch_slider = Scale(self, from_=0, to=2, resolution=0.01, orient=Tk.HORIZONTAL)
         self.stretch_slider.pack(fill=Tk.BOTH)
 
         # Simulation View Mode
@@ -37,6 +35,9 @@ class ControlPanel(Tk.Frame):
         view_xz.pack(fill=Tk.BOTH)
 
         # Simulation Output Buttons
+        self.calc_button = Button(self, text=u"Calculate")
+        self.calc_button.bind('<Button>', self.on_input)
+        self.calc_button.pack(fill=Tk.BOTH)
         # * Save Button
         self.save_button = Button(self, text=u"Save")
         self.save_button.bind('<Button>', self.on_save)
@@ -46,8 +47,8 @@ class ControlPanel(Tk.Frame):
         self.load_button.bind('<Button>', self.on_load)
         self.load_button.pack(fill=Tk.BOTH)
 
-        self.stretch_slider.set(0.5)
         self.turns_slider.set(5)
+        self.stretch_slider.set(0.5)
         self.view_mode.set('xy')
 
     def on_input(self, event):
