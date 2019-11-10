@@ -6,7 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 
-from mpl_toolkits.mplot3d import Axes3D
+from numpy import hypot, log
 
 from pubsub import pub
 from pathlib import Path as path
@@ -30,8 +30,7 @@ class SolenoidView(Tk.Tk):
         # UI Plot Widget
         # * Matplotlib Figure
         self.figure = Figure()
-        self.axes = self.figure.add_axes((0.05, .05, .90, .90), projection='3d')
-        #self.axes = self.figure.add_axes((0.05, .05, .90, .90))
+        self.axes = self.figure.add_axes((0.05, .05, .90, .90))
         # * Canvas Widget
         self.canvas = FigureCanvasTkAgg(self.figure, master=self)
         self.canvas.get_tk_widget().pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
@@ -43,27 +42,15 @@ class SolenoidView(Tk.Tk):
 
     def update_view(self, results):
         ''' Update the window view using given results and params '''
-        import numpy as np
-        X,  Y,  Z  = results['X'],  results['Y'],  results['Z']
-        Bx, By, Bz = results['Bx'], results['By'], results['Bz']
-        B = np.sqrt(Bx**2 + By**2 + Bz**2)
 
         self.axes.clear()
         self.canvas.draw()
 
-        #self.axes.contourf(X[:,:,0], Y[:,:,0], B[:,:,0]) 
-        #self.axes.contourf(X[:,:,0], Z[:,:,0], B[:,:,0]) 
-        self.axes.quiver(X, Y, Z, Bx, By, Bz, length=1, color='k') 
-        #self.axes.streamplot(X[:,:,0], Y[:,:,0], Bx[:,:,0], By[:,:,0])
-        #self.axes.streamplot(X[:,:,0], Z[:,:,0], Bx[:,:,0], Bz[:,0,:])
+        H,  V  = results['hv'][0], results['hv'][1]
+        Bh, Bv = results["xz"]
 
-        l = self.control_panel.state['turns']
-        s = self.control_panel.state['stretch']
-        t = np.linspace(0, l, 1000)
-        x = s*np.cos(t)
-        y = s*np.sin(t)
-        z = t
-        self.axes.plot(x,y,z, 'r', lw=2)
+        c = 2 * log(hypot(Bh, Bv))
+        self.axes.streamplot(-H, V, Bh, Bv, color=c, cmap='inferno', density=1.5)
 
         self.canvas.draw()
 
