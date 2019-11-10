@@ -28,14 +28,13 @@ class HelicoidalSolenoid:
 
         h_axis = np.linspace(-1, 1, 10)
 
-        X, Y = np.meshgrid(h_axis, h_axis, indexing='xy')
-        Z, X = np.meshgrid(h_axis, h_axis, indexing='xy')
+        H, V = np.meshgrid(h_axis, h_axis, indexing='xy')
 
         B = np.vectorize(self.simpson, excluded=['self'])
 
         self._results = {
-            'xy': (B(dBx, X, Y, 0), B(dBy, X, Y, 0)), 
-            'xz': (B(dBz, X, 0, Z), B(dBx, X, 0, Z))
+            'xy': (B(dBx, H, V, 0), B(dBy, H, V, 0)), 
+            'xz': (B(dBz, V, 0, H), B(dBx, V, 0, H))
         }
         
     def simpson(self, f, x, y, z, n=1000):
@@ -59,4 +58,3 @@ class HelicoidalSolenoid:
     def feed(self, params):
         self._turns = params['turns'];
         self._stretch = params['stretch'];
-
