@@ -46,6 +46,9 @@ class ControlPanel(Tk.Frame):
         self.load_button.bind('<Button>', self.on_load)
         self.load_button.pack(fill=Tk.BOTH)
 
+        self.stretch_slider.set(0.5)
+        self.turns_slider.set(5)
+        self.view_mode.set('xy')
 
     def on_input(self, event):
         ''' Inform that the user changed some input '''
