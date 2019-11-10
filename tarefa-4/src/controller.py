@@ -13,7 +13,6 @@ class SolenoidApp:
         #self.view  = SolenoidView("Magnetic Field in Solenoid")
         # App Events 
         pub.subscribe(self.save_simulation, 'on_save')
-        pub.subscribe(self.load_simulation, 'on_load')
         pub.subscribe(self.calculate_field, 'on_input')
 
     def calculate_field(self, params):
@@ -26,11 +25,7 @@ class SolenoidApp:
 
     def save_simulation(self):
         ''' Opens the view save file dialog '''
-        self.view.save_dialog(results=self.model.results)
-
-    def load_simulation(self):
-        ''' Opens the view load file dialog '''
-        self.view.load_dialog()
+        self.view.save_dialog()
 
     def run(self):
         self.view.open()

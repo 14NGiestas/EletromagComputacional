@@ -37,7 +37,6 @@ class SolenoidView(Tk.Tk):
         # UI Events
         pub.subscribe(self.update_view, 'update_view')
         pub.subscribe(self.save_dialog, 'save_dialog')
-        pub.subscribe(self.load_dialog, 'load_dialog')
 
     def update_view(self, results):
         H,  V  = results['HV'][0], results['HV'][1]
@@ -66,7 +65,7 @@ class SolenoidView(Tk.Tk):
         
         self.canvas.draw()
 
-    def save_dialog(self, results):
+    def save_dialog(self):
         ''' Opens a save dialog and save simulation results in a file '''
         filename = filedialog.asksaveasfilename(initialdir=USER_HOME,
                                                 filetypes=ALLOWED_FILES,

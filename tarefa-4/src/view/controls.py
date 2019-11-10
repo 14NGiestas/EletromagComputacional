@@ -40,10 +40,6 @@ class ControlPanel(Tk.Frame):
         self.save_button = Button(self, text=u"Save")
         self.save_button.bind('<Button>', self.on_save)
         self.save_button.pack(fill=Tk.BOTH)
-        # * Load Button
-        self.load_button = Button(self, text=u"Load")
-        self.load_button.bind('<Button>', self.on_load)
-        self.load_button.pack(fill=Tk.BOTH)
 
         self.turns_slider.set(5)
         self.stretch_slider.set(0.5)
@@ -55,11 +51,7 @@ class ControlPanel(Tk.Frame):
 
     def on_save(self, event):
         ''' Inform that the user pressed the save button '''
-        pub.sendMessage('on_save', params=self.state)
-
-    def on_load(self, event):
-        ''' Inform that the user pressed the load button '''
-        pub.sendMessage('on_load')
+        pub.sendMessage('on_save')
 
     @property
     def state(self):
