@@ -1,5 +1,5 @@
 import tkinter as Tk
-from tkinter import Label, Scale, Button
+from tkinter import Label, Scale, Button, Radiobutton, StringVar
 from pubsub import pub
 
 class ControlPanel(Tk.Frame):
@@ -25,6 +25,17 @@ class ControlPanel(Tk.Frame):
         self.stretch_slider.bind('<ButtonRelease-1>', self.on_input)
         self.stretch_slider.pack(fill=Tk.BOTH)
 
+        # Simulation View Mode
+        self.view_mode = StringVar()
+
+        view_xy = Radiobutton(self, text="View XY", variable=self.view_mode, value='xy')
+        view_xy.bind('<ButtonRelease-1>', self.on_input)
+        view_xy.pack(fill=Tk.BOTH)
+        
+        view_xz = Radiobutton(self, text="View XZ", variable=self.view_mode, value='xz')
+        view_xz.bind('<ButtonRelease-1>', self.on_input)
+        view_xz.pack(fill=Tk.BOTH)
+
         # Simulation Output Buttons
         # * Save Button
         self.save_button = Button(self, text=u"Save")
@@ -34,6 +45,7 @@ class ControlPanel(Tk.Frame):
         self.load_button = Button(self, text=u"Load")
         self.load_button.bind('<Button>', self.on_load)
         self.load_button.pack(fill=Tk.BOTH)
+
 
     def on_input(self, event):
         ''' Inform that the user changed some input '''
@@ -51,7 +63,10 @@ class ControlPanel(Tk.Frame):
     def state(self):
         turns    = self.turns_slider.get()
         stretch  = self.stretch_slider.get()
+        view_mode = self.view_mode.get()
+
         return {
             'turns':   turns,
             'stretch': stretch,
+            'view_mode': view_mode 
         }
