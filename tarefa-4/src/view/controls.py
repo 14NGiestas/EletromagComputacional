@@ -26,11 +26,11 @@ class ControlPanel(Tk.Frame):
         # Simulation View Mode
         self.view_mode = StringVar()
 
-        view_xy = Radiobutton(self, text="View XY", variable=self.view_mode, value='xy')
-        view_xy.pack(fill=Tk.BOTH)
+        #view_xy = Radiobutton(self, text="View XY", variable=self.view_mode, value='xy')
+        #view_xy.pack(fill=Tk.BOTH)
         
-        view_yz = Radiobutton(self, text="View YZ", variable=self.view_mode, value='yz')
-        view_yz.pack(fill=Tk.BOTH)
+        #view_yz = Radiobutton(self, text="View YZ", variable=self.view_mode, value='yz')
+        #view_yz.pack(fill=Tk.BOTH)
 
         # Simulation Output Buttons
         self.calc_button = Button(self, text=u"Calculate")
@@ -43,7 +43,7 @@ class ControlPanel(Tk.Frame):
 
         self.turns_slider.set(5)
         self.stretch_slider.set(0.5)
-        self.view_mode.set('xy')
+        self.view_mode.set('yz')
 
     def on_input(self, event):
         ''' Inform that the user changed some input '''
