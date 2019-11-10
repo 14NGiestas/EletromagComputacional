@@ -10,10 +10,11 @@ class HelicoidalSolenoid:
 
     def calculate(self):
         # Parameters
-        l = 5 # Number of Turns
-        h = 0.5 # R / h - Stretch
+        l = self.turns # Number of Turns
+        h = self.stretch # R / h - Stretch
         n = 1000 # Precision Simpson
 
+        @np.vectorize
         def simpson(f, axis, x, y, z):
             a = 0
             b = l
@@ -34,30 +35,46 @@ class HelicoidalSolenoid:
 
         def dB(x, y, z, t, axis):
             d = ((x - cos(2*pi*t))**2 + (y - np.sin(2*pi*t))**2 + (z - h*t)**2)**(3/2)
+
             if axis == 'x':
                 n = 2*pi*cos(2*pi*t)*(z - h*t) - h*(y - sin(2*pi*t))
             elif axis == 'y':
-                n = (2*pi*cos(2*pi*t)*(z-h*t) + h*(x - sin(2*pi*t)))
+                n = h*(x - cos(2*pi*t)) + 2*pi*sin(2*pi*t)*(z - h*t)
+                #n = (x - np.cos(t)) + np.sin(t) * (z*k - t)
             elif axis == 'z':
                 n = - 2*pi*sin(2*pi*t)*(y - sin(2*pi*t)) - 2*pi*cos(2*pi*t)*(x - cos(2*pi*t))
+                #n = - np.cos(t) * (x - np.cos(t)) - np.sin(t) * (y - np.sin(t))
+
             return n / d
 
-        n_axis = 10
+        n_axis = 15
 
-        V = np.linspace(-2, 2, n_axis)
-        H = np.linspace(-h*(l-1), -h, n_axis)
+        if self.view_mode == 'xy':
+            x = np.linspace(-2, 2, n_axis)
+            y = np.linspace(-2, 2, n_axis)
 
-        Bz, Bx = np.meshgrid(H, V)
+            X, Y = np.meshgrid(x, y, indexing='xy')
 
-        for i in range(n_axis):
-            for j in range(n_axis):
-                Bz[i,j] = simpson(dB, 'z', V[i], 0, H[j])
-                Bx[i,j] = simpson(dB, 'x', V[i], 0, H[j])
+            Bx = -simpson(dB, 'x', -X, -Y, 0)
+            By = -simpson(dB, 'y', -X, -Y, 0)
 
-        self.results = {
-            'hv': (H, V),
-            'xz': (Bz,Bx),
-        }
+            self.results = {
+                'HV': (X, Y),
+                'Bhv': (Bx, By)
+            }
+        elif self.view_mode == 'yz':
+            y = np.linspace(-2, 2, n_axis)
+            z = np.linspace(-1, 1 + h*l, n_axis)
+
+            Y, Z = np.meshgrid(y, z, indexing='xy')
+
+            By = -simpson(dB, 'y', 0, -Y, -Z)
+            Bz = -simpson(dB, 'z', 0, -Y, -Z)
+
+            self.results = {
+                'HV': (Y, Z),
+                'Bhv': (By, Bz)
+            }
 
     def feed(self, params):
         self.turns = params['turns']

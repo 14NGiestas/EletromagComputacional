@@ -5,7 +5,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib import pyplot as plt
 
-from numpy import hypot, log
+from numpy import hypot, log, pi, cos, sin, linspace
 
 from pubsub import pub
 from pathlib import Path as path
@@ -41,7 +41,7 @@ class SolenoidView(Tk.Tk):
 
     def update_view(self, results):
         ''' Update the window view using given results and params '''
-
+        '''
         self.axes.clear()
         self.canvas.draw()
 
@@ -51,6 +51,38 @@ class SolenoidView(Tk.Tk):
         c = 2 * log(hypot(Bh, Bv))
         self.axes.streamplot(-H, V, Bh, Bv, color=c, cmap='inferno', density=1.5)
 
+        self.canvas.draw()
+        '''
+
+        H,  V  = results['HV'][0], results['HV'][1]
+        Bh, Bv = results["Bhv"]
+
+        self.axes.set_aspect('equal')
+        self.axes.clear()
+        self.canvas.draw()
+        #self.figure.rcParams['figure.figsize'] = (5,4)
+        #self.figure.rcParams['font.size'] = 16
+        #self.figure.rcParams['axes.titlepad'] = 10 
+        #self.figure.margins(x=0.5, y=0.5)
+        #self.figure.style.use('seaborn-whitegrid')
+        
+        c = 2 * (hypot(Bh, Bv))
+        self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=1.5)
+        
+        view_mode = self.control_panel.state['view_mode']
+
+        if view_mode == 'yz':
+            l = self.control_panel.state['turns']
+            h = self.control_panel.state['stretch']
+
+            ptsY = [h * (i/2 + 1/4) for i in range(2*l)]
+            ptsX = [(-1)**(i) for i in range(2*l)]
+            self.axes.plot(ptsX, ptsY, 'o', markersize=7, markerfacecolor='w', markeredgewidth=1.5, markeredgecolor=(0, 0, 0, 1))
+        elif view_mode == 'xy':
+            t_int = linspace(0, 1, 100)
+            self.axes.plot(cos(2*pi*t_int), sin(2*pi*t_int), color='black')
+        
+        #self.figure.tight_layout()
         self.canvas.draw()
 
     def save_dialog(self, results):
