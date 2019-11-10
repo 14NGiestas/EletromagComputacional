@@ -12,7 +12,7 @@ class ControlPanel(Tk.Frame):
         self.turns_label = Label(self, text=u"Turns (l = 2πL/h)")
         self.turns_label.pack(fill=Tk.BOTH)
         # * * Slider
-        self.turns_slider = Scale(self, from_=0, to=200, orient=Tk.HORIZONTAL)
+        self.turns_slider = Scale(self, from_=0.01, to=10, resolution=0.01, orient=Tk.HORIZONTAL)
         self.turns_slider.bind('<ButtonRelease-1>', self.on_input)
         self.turns_slider.pack(fill=Tk.BOTH)
 
@@ -21,7 +21,7 @@ class ControlPanel(Tk.Frame):
         self.stretch_label = Label(self, text=u"Stretch (s = 2πR/h)")
         self.stretch_label.pack(fill=Tk.BOTH)
         # * * Slider
-        self.stretch_slider = Scale(self, from_=0, to=200, orient=Tk.HORIZONTAL)
+        self.stretch_slider = Scale(self, from_=0.01, to=10, resolution=0.01, orient=Tk.HORIZONTAL)
         self.stretch_slider.bind('<ButtonRelease-1>', self.on_input)
         self.stretch_slider.pack(fill=Tk.BOTH)
 

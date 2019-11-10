@@ -42,12 +42,14 @@ class SolenoidView(Tk.Tk):
 
     def update_view(self, results):
         ''' Update the window view using given results and params '''
-        #bx, by, bz = results['bx'], results['by'], results['bz']
         import numpy as np
-        Y, X = np.mgrid[-3:3:100j, -3:3:100j]
-        Bx = -1 - X**2 + Y
-        By = 1 + X - Y**2
-        self.axes.streamplot(X, Y, Bx, By, density=0.6, cmap='magma')
+        H,  V  = results['H'], results['V']
+        Bx, By = results['Bzx']
+        
+        self.axes.clear()
+        self.canvas.draw()
+
+        self.axes.streamplot(H, V, Bx, By, density=0.6, cmap='magma')
         self.canvas.draw()
 
     def save_dialog(self, results):
