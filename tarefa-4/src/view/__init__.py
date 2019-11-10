@@ -13,7 +13,7 @@ from pathlib import Path as path
 from view.controls import ControlPanel 
 
 ALLOWED_FILES = (
-    ("Simulation Files", "*.sim"),
+    ("Simulation Files", "*.svg"),
     ("All Files", "*.*")
 )
 
@@ -40,38 +40,19 @@ class SolenoidView(Tk.Tk):
         pub.subscribe(self.load_dialog, 'load_dialog')
 
     def update_view(self, results):
-        ''' Update the window view using given results and params '''
-        '''
-        self.axes.clear()
-        self.canvas.draw()
-
-        H,  V  = results['hv'][0], results['hv'][1]
-        Bh, Bv = results["xz"]
-
-        c = 2 * log(hypot(Bh, Bv))
-        self.axes.streamplot(-H, V, Bh, Bv, color=c, cmap='inferno', density=1.5)
-
-        self.canvas.draw()
-        '''
-
         H,  V  = results['HV'][0], results['HV'][1]
         Bh, Bv = results["Bhv"]
 
         self.axes.set_aspect('equal')
         self.axes.clear()
         self.canvas.draw()
-        #self.figure.rcParams['figure.figsize'] = (5,4)
-        #self.figure.rcParams['font.size'] = 16
-        #self.figure.rcParams['axes.titlepad'] = 10 
-        #self.figure.margins(x=0.5, y=0.5)
-        #self.figure.style.use('seaborn-whitegrid')
-        
-        c = 2 * (hypot(Bh, Bv))
-        self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=1.5)
         
         view_mode = self.control_panel.state['view_mode']
 
         if view_mode == 'yz':
+            c = 2 * log(hypot(Bh, Bv))
+            self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=1.5)
+        
             l = self.control_panel.state['turns']
             h = self.control_panel.state['stretch']
 
@@ -79,10 +60,10 @@ class SolenoidView(Tk.Tk):
             ptsX = [(-1)**(i) for i in range(2*l)]
             self.axes.plot(ptsX, ptsY, 'o', markersize=7, markerfacecolor='w', markeredgewidth=1.5, markeredgecolor=(0, 0, 0, 1))
         elif view_mode == 'xy':
+            self.axes.streamplot(H, V, Bh, Bv, cmap='viridis', density=1.5)
             t_int = linspace(0, 1, 100)
             self.axes.plot(cos(2*pi*t_int), sin(2*pi*t_int), color='black')
         
-        #self.figure.tight_layout()
         self.canvas.draw()
 
     def save_dialog(self, results):
@@ -90,20 +71,14 @@ class SolenoidView(Tk.Tk):
         filename = filedialog.asksaveasfilename(initialdir=USER_HOME,
                                                 filetypes=ALLOWED_FILES,
                                                 title="Save simulation file")
-        pass
-
-    def load_dialog(self):
-        ''' Opens a load dialog and parses the file, updating the view '''
-        filename = filedialog.askopenasfilename(initialdir=USER_HOME,
-                                                filetypes=ALLOWED_FILES,
-                                                title="Load simulation file")
-        pass
+        self.figure.savefig(filename)
 
     def open_running(self, task):
+        ''' Displays a message while running the simulation '''
         popup = Toplevel(self)
         x = self.winfo_x()
         y = self.winfo_y()
-        popup.geometry("+%d+%d" % (x + x//2, y + y//2))
+        popup.geometry("+%d+%d" % (x//2, y//2))
         popup.title("Running")
         msg = Message(popup, text="Running simulation. Please Wait.")
         msg.pack()
