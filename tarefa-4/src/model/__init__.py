@@ -12,7 +12,7 @@ class HelicoidalSolenoid:
     
     def calculate(self):
         def dBx(x, y, z, t):
-            n = np.cos(t)*(z*self._stretch - t) - (y - np.sin(t))
+            n = np.cos(t)*(z*self._stretch - t) + (y - np.sin(t))
             d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t / self._stretch)**2)**(3/2)
             return n / d
 
@@ -22,7 +22,7 @@ class HelicoidalSolenoid:
             return n / d
 
         def dBz(x, y, z, t):
-            n = -np.cos(t) * (x - np.cos(t)) + np.sin(t)*(y - np.sin(t))
+            n = - np.cos(t) * (x - np.cos(t)) - np.sin(t)*(y - np.sin(t))
             d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t / self._stretch)**2)**(3/2)
             return n / d
 
@@ -33,8 +33,8 @@ class HelicoidalSolenoid:
         B = np.vectorize(self.simpson, excluded=['self'])
 
         self._results = {
-            'xy': (B(dBx, H, V, 0), B(dBy, H, V, 0)), 
-            'xz': (B(dBz, V, 0, H), B(dBx, V, 0, H))
+            'Bxy': (H, V, B(dBx, H, V, 0), B(dBy, H, V, 0)), 
+            'Bzx': (H, V, B(dBz, V, 0, H), B(dBx, V, 0, H))
         }
         
     def simpson(self, f, x, y, z, n=1000):
@@ -58,3 +58,4 @@ class HelicoidalSolenoid:
     def feed(self, params):
         self._turns = params['turns'];
         self._stretch = params['stretch'];
+
