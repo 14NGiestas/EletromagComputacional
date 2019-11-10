@@ -12,21 +12,26 @@ class HelicoidalSolenoid:
         return self._results
     
     def calculate(self):
+
+        s = self._stretch
+        l = self._turns
+
         def dBx(x, y, z, t):
             n = np.cos(t)*(z*self._stretch - t) + (y - np.sin(t))
-            d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t / self._stretch)**2)**(3/2)
+            d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t/s)**2)**(3/2)
             return n / d
 
         def dBy(x, y, z, t):
-            n = (x - np.cos(t)) + np.sin(t) * (z * self._stretch - t)
-            d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t / self._stretch)**2)**(3/2)
+            n = (x - np.cos(t)) + np.sin(t) * (z *  - t)
+            d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t/s)**2)**(3/2)
             return n / d
 
         def dBz(x, y, z, t):
             n = - np.cos(t) * (x - np.cos(t)) - np.sin(t)*(y - np.sin(t))
-            d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t / self._stretch)**2)**(3/2)
+            d = ((x - np.cos(t))**2 + (y - np.sin(t))**2 + (z - t/s)**2)**(3/2)
             return n / d
 
+        @np.vectorize
         def simpson(f, x, y, z, b):
             n = 1000
             h = b / n
@@ -44,18 +49,23 @@ class HelicoidalSolenoid:
 
             return (h/3)*(f(x, y, z, 0)+f(x, y, z, b)+k)    
 
-        h_axis = np.linspace(-1, 1, 20)
+        x_axis = np.linspace(-10, 10, 10)
+        y_axis = np.linspace(-10, 10, 10)
+        z_axis = np.linspace(-10, 10, 1)
 
-        H, V = np.meshgrid(h_axis, h_axis, indexing='xy')
+        X, Y, Z = np.meshgrid(x_axis, y_axis, z_axis, indexing='xy')
 
-        B = np.vectorize(simpson)
-
-        l = self._turns
+        Bx = simpson(dBx, X, Y, Z, l)
+        By = simpson(dBx, X, Y, Z, l)
+        Bz = simpson(dBx, X, Y, Z, l)
 
         self._results = {
-            'H': H, 'V': V,
-            'Bxy': (B(dBx, H, V, 0, l), B(dBy, H, V, 0, l)), 
-            'Bzx': (B(dBz, V, 0, H, l), B(dBx, V, 0, H, l))
+            'X': X,
+            'Y': Y,
+            'Z': Z,
+            'Bx': Bx,
+            'By': By, 
+            'Bz': Bz 
         }
 
     
