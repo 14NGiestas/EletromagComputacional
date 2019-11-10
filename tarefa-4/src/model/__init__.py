@@ -1,5 +1,6 @@
 import numba as nb
 import numpy as np
+from numba import float64
 from numpy import cos, sin, pi
 
 class HelicoidalSolenoid:
@@ -14,38 +15,47 @@ class HelicoidalSolenoid:
         h = self.stretch # R / h - Stretch
         n = 1000 # Precision Simpson
 
-        @np.vectorize
-        def simpson(f, axis, x, y, z):
-            a = 0
-            b = l
-            h = (a-b) / n
-            k = 0.0
-            t = h
+        def integrate(x, y, z, axis):
 
-            for i in range(1, n//2 + 1):
-                k += 4*f(x, y, z, t, axis)
-                t += 2*h
+            def simpson(f, x, y, z):
+                a = 0
+                b = l
+                h = (a-b) / n
+                k = 0.0
+                t = h
 
-            t = 2*h
-            for i in range(1, n//2):
-                k += 2*f(x, y, z, t, axis)
-                t += 2*h
+                for i in range(1, n//2 + 1):
+                    k += 4*f(x, y, z, t)
+                    t += 2*h
 
-            return (h/3)*(f(x, y, z, a, axis)+f(x, y, z, b, axis)+k)
+                t = 2*h
+                for i in range(1, n//2):
+                    k += 2*f(x, y, z, t)
+                    t += 2*h
 
-        def dB(x, y, z, t, axis):
-            d = ((x - cos(2*pi*t))**2 + (y - np.sin(2*pi*t))**2 + (z - h*t)**2)**(3/2)
+                return (h/3)*(f(x, y, z, a)+f(x, y, z, b)+k)
 
             if axis == 'x':
-                n = 2*pi*cos(2*pi*t)*(z - h*t) - h*(y - sin(2*pi*t))
+                @nb.vectorize
+                def dBx(x,y,z,t):
+                    d = ((x - cos(2*pi*t))**2 + (y - np.sin(2*pi*t))**2 + (z - h*t)**2)**(3/2)
+                    n = 2*pi*cos(2*pi*t)*(z - h*t) - h*(y - sin(2*pi*t))
+                    return n / d
+                return simpson(dBx, x, y, z)
             elif axis == 'y':
-                n = h*(x - cos(2*pi*t)) + 2*pi*sin(2*pi*t)*(z - h*t)
-                #n = (x - np.cos(t)) + np.sin(t) * (z*k - t)
+                @nb.vectorize
+                def dBy(x,y,z,t):
+                    d = ((x - cos(2*pi*t))**2 + (y - np.sin(2*pi*t))**2 + (z - h*t)**2)**(3/2)
+                    n = h*(x - cos(2*pi*t)) + 2*pi*sin(2*pi*t)*(z - h*t)
+                    return n / d
+                return simpson(dBy, x, y, z)
             elif axis == 'z':
-                n = - 2*pi*sin(2*pi*t)*(y - sin(2*pi*t)) - 2*pi*cos(2*pi*t)*(x - cos(2*pi*t))
-                #n = - np.cos(t) * (x - np.cos(t)) - np.sin(t) * (y - np.sin(t))
-
-            return n / d
+                @nb.vectorize
+                def dBz(x,y,z,t):
+                    d = ((x - cos(2*pi*t))**2 + (y - np.sin(2*pi*t))**2 + (z - h*t)**2)**(3/2)
+                    n = - 2*pi*sin(2*pi*t)*(y - sin(2*pi*t)) - 2*pi*cos(2*pi*t)*(x - cos(2*pi*t))
+                    return n / d
+                return simpson(dBz, x, y, z)
 
         n_axis = 15
 
@@ -55,8 +65,8 @@ class HelicoidalSolenoid:
 
             X, Y = np.meshgrid(x, y, indexing='xy')
 
-            Bx = -simpson(dB, 'x', -X, -Y, 0)
-            By = -simpson(dB, 'y', -X, -Y, 0)
+            Bx = -integrate(-X, -Y, 0, 'x')
+            By = -integrate(-X, -Y, 0, 'y')
 
             self.results = {
                 'HV': (X, Y),
@@ -68,8 +78,8 @@ class HelicoidalSolenoid:
 
             Y, Z = np.meshgrid(y, z, indexing='xy')
 
-            By = -simpson(dB, 'y', 0, -Y, -Z)
-            Bz = -simpson(dB, 'z', 0, -Y, -Z)
+            By = -integrate(0, -Y, -Z, 'y')
+            Bz = -integrate(0, -Y, -Z, 'z')
 
             self.results = {
                 'HV': (Y, Z),
