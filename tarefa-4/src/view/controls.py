@@ -30,9 +30,9 @@ class ControlPanel(Tk.Frame):
         view_xy.bind('<ButtonRelease-1>', self.on_input)
         view_xy.pack(fill=Tk.BOTH)
         
-        view_xz = Radiobutton(self, text="View XZ", variable=self.view_mode, value='xz')
-        view_xz.bind('<ButtonRelease-1>', self.on_input)
-        view_xz.pack(fill=Tk.BOTH)
+        view_yz = Radiobutton(self, text="View YZ", variable=self.view_mode, value='yz')
+        view_yz.bind('<ButtonRelease-1>', self.on_input)
+        view_yz.pack(fill=Tk.BOTH)
 
         # Simulation Output Buttons
         self.calc_button = Button(self, text=u"Calculate")
