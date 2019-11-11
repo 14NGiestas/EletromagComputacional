@@ -34,6 +34,7 @@ class SolenoidView(Tk.Tk):
         self.canvas = FigureCanvasTkAgg(self.figure, master=self)
         self.canvas.get_tk_widget().pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
         self.canvas.draw()
+        self.colorbar = None
         # UI Events
         pub.subscribe(self.update_view, 'update_view')
         pub.subscribe(self.save_dialog, 'save_dialog')
@@ -47,10 +48,10 @@ class SolenoidView(Tk.Tk):
         
         view_mode = self.control_panel.state['view_mode']
 
-        if view_mode == 'yz':
+        if view_mode == 'yz' or view_mode == 'inf':
             self.axes.set_aspect('auto')
             c = 2 * log(hypot(Bh, Bv))
-            self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=1.5)
+            plot = self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=1.5)
         
             l = self.control_panel.state['turns']
             h = self.control_panel.state['stretch']
@@ -58,12 +59,35 @@ class SolenoidView(Tk.Tk):
             ptsY = [h * (i/2 + 1/4) for i in range(2*l)]
             ptsX = [(-1)**(i) for i in range(2*l)]
             self.axes.plot(ptsX, ptsY, 'o', markersize=7, markerfacecolor='w', markeredgewidth=1.5, markeredgecolor=(0, 0, 0, 1))
+        
+            if self.colorbar:
+                self.colorbar.update_bruteforce(plot.lines)
+            else:
+                self.colorbar = self.figure.colorbar(plot.lines)
+
+            if view_mode == 'inf': 
+                self.axes.set_xlim(-2, 2)
+                self.axes.set_ylim(0.1*h, 0.7*h*l)
+                self.axes.set_aspect('auto')
         elif view_mode == 'xy':
             self.axes.set_aspect('equal')
-            self.axes.streamplot(H, V, Bh, Bv, cmap='viridis', density=1.5)
+
+            l = self.control_panel.state['turns']
+            h = self.control_panel.state['stretch']
+
+            c = 2 * log(hypot(Bh, Bv))
+            plot = self.axes.streamplot(H, V, Bh, Bv, color=c, cmap='viridis', density=2.0)
             t_int = linspace(0, 1, 100)
-            self.axes.plot(cos(2*pi*t_int), sin(2*pi*t_int), color='black')
+            #self.axes.plot(cos(2*pi*t_int), sin(2*pi*t_int), color='black')
         
+            if self.colorbar:
+                self.colorbar.update_bruteforce(plot.lines)
+            else:
+                self.colorbar = self.figure.colorbar(plot.lines)
+
+            l = 0
+            self.axes.plot(-cos(2*pi*h*l), sin(2*pi*h*l), 'o', markersize=7, markerfacecolor='w', markeredgewidth=1.5, markeredgecolor=(0, 0, 0, 1))
+
         self.canvas.draw()
 
     def save_dialog(self):

@@ -13,10 +13,9 @@ class HelicoidalSolenoid:
         # Parameters
         l = self.turns # Number of Turns
         h = self.stretch # R / h - Stretch
-        n = 1000 # Precision Simpson
+        n = 2000 # Precision Simpson
 
         def integrate(x, y, z, axis):
-
             def simpson(f, x, y, z):
                 a = 0
                 b = l
@@ -72,7 +71,7 @@ class HelicoidalSolenoid:
                 'HV': (X, Y),
                 'Bhv': (Bx, By)
             }
-        elif self.view_mode == 'yz':
+        elif self.view_mode == 'yz' or self.view_mode == 'inf':
             y = np.linspace(-2, 2, n_axis)
             z = np.linspace(-1, 1 + h*l, n_axis)
 
