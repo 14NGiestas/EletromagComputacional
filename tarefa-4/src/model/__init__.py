@@ -56,7 +56,7 @@ class HelicoidalSolenoid:
                     return n / d
                 return simpson(dBz, x, y, z)
 
-        n_axis = 20
+        n_axis = 100
 
         if self.view_mode == 'xy':
             x = np.linspace(-2, 2, n_axis)
