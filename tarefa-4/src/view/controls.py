@@ -12,7 +12,7 @@ class ControlPanel(Tk.Frame):
         self.turns_label = Label(self, text=u"Turns (L)")
         self.turns_label.pack(fill=Tk.BOTH)
         # * * Slider
-        self.turns_slider = Scale(self, from_=1, to=10, resolution=1, orient=Tk.HORIZONTAL)
+        self.turns_slider = Scale(self, from_=1, to=20, resolution=1, orient=Tk.HORIZONTAL)
         self.turns_slider.pack(fill=Tk.BOTH)
 
         # * $ Strech: s  = \frac{R}{p} $ 
@@ -20,7 +20,7 @@ class ControlPanel(Tk.Frame):
         self.stretch_label = Label(self, text=u"Stretch (h/R)")
         self.stretch_label.pack(fill=Tk.BOTH)
         # * * Slider
-        self.stretch_slider = Scale(self, from_=0, to=2, resolution=0.01, orient=Tk.HORIZONTAL)
+        self.stretch_slider = Scale(self, from_=0, to=1, resolution=0.01, orient=Tk.HORIZONTAL)
         self.stretch_slider.pack(fill=Tk.BOTH)
 
         # Simulation View Mode
