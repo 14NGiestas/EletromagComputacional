@@ -1,0 +1,3 @@
+pypubsub
+numba
+numpy
