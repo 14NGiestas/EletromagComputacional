@@ -9,8 +9,7 @@ from threading import Thread
 class SolenoidApp:
     def __init__(self):
         self.model = HelicoidalSolenoid()
-        self.view  = SolenoidView("Tarefa 4 - Campo magnetico em um solenoide")
-        #self.view  = SolenoidView("Magnetic Field in Solenoid")
+        self.view  = SolenoidView("Tarefa 5 - Circuitos Elétricos")
         # App Events 
         pub.subscribe(self.save_simulation, 'on_save')
         pub.subscribe(self.calculate_field, 'on_input')
