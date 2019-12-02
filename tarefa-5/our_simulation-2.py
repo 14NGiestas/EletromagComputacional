@@ -15,23 +15,7 @@ tau_1 = 1/(r*c) # tempo de relaxação
 k_p, k_d, g_p, g_d = (omega_0**2, 0, 0, tau_1)
 
 edges = [
-    # resistors
-    (1,2, {'v': r}),
-    (2,3, {'v': r}),
-    (3,4, {'v': r}),
-    (4,2, {'v': r}),
-    # tank 1
-    (1,'GND1',{'v': l}),
-    (1,'GND1',{'v': c}),
-    # tank 2
-    (2,'GND2',{'v': l}),
-    (2,'GND2',{'v': c}),
-    # tank 3
-    (3,'GND3',{'v': l}),
-    (3,'GND3',{'v': c}),
-    # tank 4
-    (4,'GND4',{'v': l}),
-    (4,'GND4',{'v': c}),
+    (1,2),(2,3),(3,4),(4,2)
 ]
 
 G = nx.Graph(edges)
@@ -70,13 +54,13 @@ def solution(Q,U0,t):
     # https://pt.wikipedia.org/wiki/Sistema_de_equa%C3%A7%C3%B5es_diferenciais#M%C3%A9todo_matricial
     # dU/dt = Q U -> U = U0*expm(Q*t)
     U = lambda t: np.dot(expm(Q*t),U0)
-    q_i = list(map(lambda x: x[:n-1], map(U, t)))
+    q_i = list(map(lambda x: x[:n], map(U, t)))
     return q_i
 
 def sync_case(start, end, step):
     # charges distributed at will, no currents on circuit
-    q0 = np.array([1.,2.,3.,4.,0.,0.,0.,0.])
-    i0 = np.array([0.,0.,0.,0.,0.,0.,0.,0.])
+    q0 = np.array([1.,2.,3.,4.])
+    i0 = np.array([0.,0.,0.,0.])
     # state-space vector
     U0 = np.hstack([q0,i0]).T
     t = np.linspace(start,end,step)
@@ -87,8 +71,8 @@ def sync_case(start, end, step):
 
 def consensus_case(start, end, step):
     # simetric distributed charges, no currents on circuit
-    q0 = np.array([-2.,-1.,1.0,2.0,0.0,0.,0.,0.])
-    i0 = np.array([0.0,0.0,0.0,0.0,0.0,0.,0.,0.])
+    q0 = np.array([2.,1.,0.,0.])
+    i0 = np.array([0.,0.,0.,0.])
     # state-space vector
     U0 = np.hstack([q0,i0]).T
     t = np.linspace(start,end,step)
